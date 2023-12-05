@@ -11,7 +11,7 @@ import argparse
 
 
 def find_list_of_tagged_instances(compartment, region):
-    search_client = oci.resource_search.ResourceSearchClient(config)
+    search_client = oci.resource_search.ResourceSearchClient(config={}, signer=signer)
     print('RQS search to find instances')
     try:
         search_client.base_client.set_region(region)
@@ -196,14 +196,13 @@ if __name__ == "__main__":
     print('Script execution start time: {0}'.format(
         start_time.replace(microsecond=0).isoformat()))
 
-    # Set up config
-    config = oci.config.from_file("~/.oci/config", "DEFAULT")
-    # Create a service client
-    identity = oci.identity.IdentityClient(config)
-    base_compute = oci.core.compute_client.ComputeClient(config)
+    # Set up instance principal
+    signer = oci.auth.signers.InstancePrincipalsSecurityTokenSigner()
+    identity = oci.identity.IdentityClient(config={}, signer=signer)
+    base_compute = oci.core.compute_client.ComputeClient(config={}, signer=signer)
 
-    region = config['region']
-    tenancy = config['tenancy']
+    region = signer.region
+    tenancy = signer.tenancy
 
     base_compute.base_client.set_region(region)
 
