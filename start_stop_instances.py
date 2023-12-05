@@ -202,7 +202,6 @@ if __name__ == "__main__":
     base_compute = oci.core.compute_client.ComputeClient(config={}, signer=signer)
 
     region = signer.region
-    #tenancy = signer.tenancy
 
     base_compute.base_client.set_region(region)
 
